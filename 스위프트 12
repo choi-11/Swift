@@ -1,9 +1,24 @@
+/*테이블 뷰 컨트롤러 이용해 할 일 만들기
+알람 앱, 메모장 앱 등 아이폰 앱에서 자주 보고 익숙하게 사용하고 있는 '목록' 기능은 테이블 뷰 컨트롤러를 이용해서 구현할 수 있다. 
+(세그웨이 지정 방법 5가지 
+1. Show : 기본 뷰 컨트롤러에 새로운 뷰 컨트롤러를 불러올 때 새로운 뷰 컨트롤러가 스택에 푸시하면서 활성화됩니다. 다시 이전 화면으로 돌아갈 때는 새로운 뷰 컨트롤러가 팝이 되면서
+          밑에 있던 기존의 뷰 컨트롤러는 활성화되는 형태입니다. 이때 가장 위에 있는 뷰 컨트롤러가 활성화 됩니다. 
+2. Show Detail : [Show]와 매우 비슷하지만 푸시가 아니라 교체(replace)된다는 점이 다릅니다. 현재 뷰 컨트롤러 스택의 최상단 뷰를 교체합니다. 
+3. Present Modally : 새로운 뷰 컨트롤러를 보여주는 스타일과 화면 전환 스타일을 결정하여 뷰를 모달 형태로 보여 줍니다. 
+4. Present As Prover : 현재 보이는 뷰 컨트롤러 위에 앵커를 가진 팝업 형태로 콘텐트 뷰를 표시합니다. 
+5. Custom : 개발자가 임의로 지정한 동작을 수행합니다. )
+(뷰가 보일 때 호출되는 합수들)
+ViewDidLoad : 뷰가 로드되었을 때 호출되는 함수로, 뷰가 생성될 때 한 번만 호출됩니다. 
+ViewWillAppear : 뷰가 노출된 준비가 끝났을 때 호출되는 함수로, 뷰가 노출될 때마다 호출됩니다. 
+ViewDIdAppear : 뷰가 완전히 보인 후 호출되는 함수로, 뷰가 완전히 보인 후 호출됩니다. */
+
 //Table//
 
 import UIKit
 
-var items = ["책 구매", "철수와 약속", "스터디 준비하기"]
-var itemsImageFile = ["cart.png", "clock.png", "pencil.png"]
+// 앱 시작 시 기본적으로 나타낼 목록
+var items = ["책 구매", "철수와 약속", "스터디 준비하기"] //외부 변수인 items의 내용을 각각 ["책 구매", "철수와 약속", "스터디 준비하기"]로 지정합니다. //
+var itemsImageFile = ["cart.png", "clock.png", "pencil.png"] //외부 변수인 이미지 파일은 각각 ["cart.png", "clock.png", "pencil.png"] 입니다. //
 
 class TableViewController: UITableViewController {
 
@@ -16,33 +31,33 @@ class TableViewController: UITableViewController {
         // self.clearsSelectionOnViewWillAppear = false
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        self.navigationItem.leftBarButtonItem = self.editButtonItem
+        self.navigationItem.leftBarButtonItem = self.editButtonItem // 바 버튼으로 목록 삭제 동작 코딩하기//
     }
     
-    
+    //뷰가 노출될 때마다 리스트의 데이터를 다시 불러옴
     override func viewWillAppear(_ animated: Bool) {
             tvListView.reloadData()
     }
     
 
     // MARK: - Table view data source
-
+// 테이블 안의 섹션 개수를 1로 설정함
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 1
+        return 1 //보통은 테이블 안에 섹션이 한 개이므로 number Of Sections의 리턴 값을 1로 합니다. //
     }
-
+//섹션당 열의 개수를 전달
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return items.count
+        return items.count //섹션당 열의 개수는 Items의 개수이므로 table View//
     }
 
-    
+    //items와 itemsImageFile의 값을 셀에 삽입함. 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "myCell", for: indexPath)
 
-        cell.textLabel?.text = items[(indexPath as NSIndexPath).row]
-        cell.imageView?.image = UIImage(named: itemsImageFile[(indexPath as NSIndexPath).row])
+        cell.textLabel?.text = items[(indexPath as NSIndexPath).row] //셀의 텍스트 레이블 앞에서 선언한 items을 대입합니다. 그내용은 "책 구매", "철수와 약속", "스터디 준비하기" 입니다. //
+        cell.imageView?.image = UIImage(named: itemsImageFile[(indexPath as NSIndexPath).row]) //셀의 이미지 뷰에 앞에서 선언한 itemsImageFile을 대입합니다. //
 
         return cell
     }
@@ -56,7 +71,7 @@ class TableViewController: UITableViewController {
     }
     */
 
-    
+    //목록 삭제 함수
     // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
@@ -68,21 +83,21 @@ class TableViewController: UITableViewController {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
         }
     }
-    
+    //삭제 시 'Delete'대신 '삭제'로 표시
     override func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
         return "삭제"
     }
     
 
-    
+    //목록 순서 바꾸기
     // Override to support rearranging the table view.
     override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-        let itemToMove = items[(fromIndexPath as NSIndexPath).row]
-        let itemImageToMove = itemsImageFile[(fromIndexPath as NSIndexPath).row]
-        items.remove(at: (fromIndexPath as NSIndexPath).row)
-        itemsImageFile.remove(at: (fromIndexPath as NSIndexPath).row)
-        items.insert(itemToMove, at: (to as NSIndexPath).row)
-        itemsImageFile.insert(itemImageToMove, at: (to as NSIndexPath).row)
+        let itemToMove = items[(fromIndexPath as NSIndexPath).row] //이동할 아이템의 위치를 itemToMove에 저장합니다. //
+        let itemImageToMove = itemsImageFile[(fromIndexPath as NSIndexPath).row] //이동할 아이템의 이미지를 itemImageToMove에 저장합니다. //
+        items.remove(at: (fromIndexPath as NSIndexPath).row) //이동할 아이템을 삭제합니다. 이때 삭제한 아이템 뒤의 아이템들의 인덱스가 재정렬됩니다. //
+        itemsImageFile.remove(at: (fromIndexPath as NSIndexPath).row) //이동할 아이템의 이미지를 삭제합니다. 이때 삭제한 아이템의 이미지 뒤의 아이템 이미지들의 인덱스가 재정렬//
+        items.insert(itemToMove, at: (to as NSIndexPath).row)//삭제된 아이템을 이동할 위치로 삽입합니다. 또한 삽입한 아이템의 뒤의 아이템들의 인덱스가 재정렬됩니다.//
+        itemsImageFile.insert(itemImageToMove, at: (to as NSIndexPath).row)//삭제된 아이템의 이미지를 이동할 위치로 삽입합니다. 또한 삽입한 아이템 이미지 뒤의 아이템 이미지들의 인덱스가 재정렬됩니다.//
     }
     
 
@@ -96,7 +111,7 @@ class TableViewController: UITableViewController {
 
     
     // MARK: - Navigation
-
+//세그웨이를 이용하여 디테일 뷰로 전환하기
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destination.
@@ -118,7 +133,7 @@ class TableViewController: UITableViewController {
 import UIKit
 
 class AddViewController: UIViewController {
-
+//새 목록 
     @IBOutlet var tfAddItem: UITextField!
     
     override func viewDidLoad() {
@@ -128,10 +143,10 @@ class AddViewController: UIViewController {
     }
     
     @IBAction func btnAddItem(_ sender: UIButton) {
-        items.append(tfAddItem.text!)
-        itemsImageFile.append("clock.png")
-        tfAddItem.text=""
-        _ = navigationController?.popViewController(animated: true)
+        items.append(tfAddItem.text!) // items에 텍스트 필드의 텍스트 값을 추가합니다. //
+        itemsImageFile.append("clock.png") //itemsImageFile 에는 무조건 'clock.png' 파일을 추가합니다//
+        tfAddItem.text=""//텍스트 필드의 내용을 지웁니다. //
+        _ = navigationController?.popViewController(animated: true) // 루트 뷰 컨트롤러, 즉 테이블 뷰로 돌아갑니다. //
     }
     
     /*
@@ -152,7 +167,7 @@ import UIKit
 
 class DetailViewController: UIViewController {
     
-    var receiveItem = ""
+    var receiveItem = "" //MainView에서 받을 텍스트를 위해 변수 receiveItem를 선언합니다. //
 
     @IBOutlet var lblItem: UILabel!
     
@@ -160,11 +175,11 @@ class DetailViewController: UIViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        lblItem.text = receiveItem
+        lblItem.text = receiveItem //뷰가 노출될 때마다 이 내용을 레이블의 텍스트로 표시합니다. //
     }
     
-    
-    func reciveItem(_ item: String)
+    //main View에서 변수를 받아오기 위한 
+    func reciveItem(_ item: String) //MainVIew 에서 변수를 받기 위한 함수를 추가합니다.//
     {
         receiveItem = item
     }
