@@ -1,5 +1,10 @@
+/*AVPlayerViewController를 사용하면 앱 내부에 저장되어 있는 비디오 파일 뿐만 아니라 외부에 링크된 비디오 파일도 간단하게 재생할 수 있습니다. 
+(First Item) = 비율(Multiplier)*(Second Item) + Constant
+*/
+
+
 import UIKit
-import AVKit
+import AVKit //비디오관련 헤더 파일//
 
 class ViewController: UIViewController {
 
@@ -9,30 +14,32 @@ class ViewController: UIViewController {
     }
 
     @IBAction func btnPlayInternalMovie(_ sender: UIButton) {
-        let filePath:String? = Bundle.main.path(forResource: "Lake", ofType: "mp4")
+    //내부 파일 mp4//
+        let filePath:String? = Bundle.main.path(forResource: "Lake", ofType: "mp4") //앱 내부의 파일명을 nsurl형식으로 변경
         let url = NSURL(fileURLWithPath: filePath!)
         
         
-        playVideo(url:  url)
+        playVideo(url:  url) //앞에서 얻은 url 을 사용하여 비디오를 재생
       
         }
         
         
     
     @IBAction func btnPlayerExternalMovie(_ sender: UIButton) {
+    //외부파일 mp4
         let url = NSURL(string: "https://vod-progressive.akamaized.net/exp=1653628025~acl=%2Fvimeo-prod-skyfire-std-us%2F01%2F2603%2F28%2F713017111%2F3305299425.mp4~hmac=bb4730c1d993d226ed1b723b13a52469d7ebdc30a12749310bde6f6b74af42f4/vimeo-prod-skyfire-std-us/01/2603/28/713017111/3305299425.mp4?filename=file.mp4?download=1&filename=Bear%20-%20117747.mp4/s/e38auz050w2mvud/Fireworks.mp4")!
                         
         
-        playVideo(url: url)
+        playVideo(url: url) //앞에서 얻은 url 을 사용하여 비디오를 재생
     }
-    private func playVideo(url: NSURL) {
-        let playerController = AVPlayerViewController()
+    private func playVideo(url: NSURL) { // AVPlayerViewController의 인스턴스를 생성
+        let playerController = AVPlayerViewController() //비디오 url로 초기화된 avplayer인스턴스를 할당
         
         let player = AVPlayer(url: url as URL)
         playerController.player = player
         
         self.present(playerController, animated:  true) {
-            player.play()
+            player.play() //비디오 
         }
         
     }
