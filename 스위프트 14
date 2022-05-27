@@ -1,0 +1,40 @@
+import UIKit
+import AVKit
+
+class ViewController: UIViewController {
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view.
+    }
+
+    @IBAction func btnPlayInternalMovie(_ sender: UIButton) {
+        let filePath:String? = Bundle.main.path(forResource: "Lake", ofType: "mp4")
+        let url = NSURL(fileURLWithPath: filePath!)
+        
+        
+        playVideo(url:  url)
+      
+        }
+        
+        
+    
+    @IBAction func btnPlayerExternalMovie(_ sender: UIButton) {
+        let url = NSURL(string: "https://vod-progressive.akamaized.net/exp=1653628025~acl=%2Fvimeo-prod-skyfire-std-us%2F01%2F2603%2F28%2F713017111%2F3305299425.mp4~hmac=bb4730c1d993d226ed1b723b13a52469d7ebdc30a12749310bde6f6b74af42f4/vimeo-prod-skyfire-std-us/01/2603/28/713017111/3305299425.mp4?filename=file.mp4?download=1&filename=Bear%20-%20117747.mp4/s/e38auz050w2mvud/Fireworks.mp4")!
+                        
+        
+        playVideo(url: url)
+    }
+    private func playVideo(url: NSURL) {
+        let playerController = AVPlayerViewController()
+        
+        let player = AVPlayer(url: url as URL)
+        playerController.player = player
+        
+        self.present(playerController, animated:  true) {
+            player.play()
+        }
+        
+    }
+}
+
