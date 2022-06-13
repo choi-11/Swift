@@ -1,0 +1,542 @@
+//
+//  TableViewController.swift
+//  Table
+//
+//  Created by 203a17 on 2022/05/13.
+//
+
+import UIKit
+
+var items = ["메모", "약속", "스터디","시간", "공책", "메모2","학교", "계산"]
+var itemsImageFile = ["1.png","2.png","3.png","4.png", "5.png", "6.png", "7.png",
+                      "8.png", "9.png", "10.png"]
+
+class TableViewController: UITableViewController {
+    
+    @IBOutlet var tvListView: UITableView!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // Uncomment the following line to preserve selection between presentations
+        // self.clearsSelectionOnViewWillAppear = false
+
+        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
+        self.navigationItem.leftBarButtonItem = self.editButtonItem
+    }
+    @IBOutlet var shareButton: UIBarButtonItem!
+    
+    
+    override func viewWillAppear(_ animated: Bool) {
+            tvListView.reloadData()
+    }
+    
+
+    // MARK: - Table view data source
+
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        // #warning Incomplete implementation, return the number of sections
+        return 1
+    }
+
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        // #warning Incomplete implementation, return the number of rows
+        return items.count
+    }
+
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "myCell", for: indexPath)
+
+        cell.textLabel?.text = items[(indexPath as NSIndexPath).row]
+        cell.imageView?.image = UIImage(named: itemsImageFile[(indexPath as NSIndexPath).row])
+
+        return cell
+    }
+    
+
+    /*
+    // Override to support conditional editing of the table view.
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        // Return false if you do not want the specified item to be editable.
+        return true
+    }
+    */
+
+    
+    // Override to support editing the table view.
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            // Delete the row from the data source
+            items.remove(at: (indexPath as NSIndexPath).row)
+            itemsImageFile.remove(at: (indexPath as NSIndexPath).row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
+        } else if editingStyle == .insert {
+            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
+        return "삭제"
+    }
+    
+
+    
+    // Override to support rearranging the table view.
+    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
+        let itemToMove = items[(fromIndexPath as NSIndexPath).row]
+        let itemImageToMove = itemsImageFile[(fromIndexPath as NSIndexPath).row]
+        items.remove(at: (fromIndexPath as NSIndexPath).row)
+        itemsImageFile.remove(at: (fromIndexPath as NSIndexPath).row)
+        items.insert(itemToMove, at: (to as NSIndexPath).row)
+        itemsImageFile.insert(itemImageToMove, at: (to as NSIndexPath).row)
+    }
+    
+
+    /*
+    // Override to support conditional rearranging of the table view.
+    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        // Return false if you do not want the item to be re-orderable.
+        return true
+    }
+    */
+
+    
+    // MARK: - Navigation
+
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // Get the new view controller using segue.destination.
+        // Pass the selected object to the new view controller.
+        if segue.identifier == "sgDetail" {
+            let cell = sender as! UITableViewCell
+            let indexPath = self.tvListView.indexPath(for: cell)
+            let detailView = segue.destination as! DetailViewController
+            detailView.receiveItem(items[((indexPath! as NSIndexPath).row)])
+        }
+    }
+    
+    @IBAction func doShare(_ sender: Any) {
+        let shareText: String = "share text test!"
+                var shareObject = [Any]()
+                
+                shareObject.append(shareText)
+                
+                let activityViewController = UIActivityViewController(activityItems : shareObject, applicationActivities: nil)
+                activityViewController.popoverPresentationController?.sourceView = self.view
+
+                //activityViewController.excludedActivityTypes = [UIActivity.ActivityType.airDrop, UIActivity.ActivityType.postToFacebook,UIActivity.ActivityType.postToTwitter,UIActivity.ActivityType.mail]
+
+                self.present(activityViewController, animated: true, completion: nil)
+        
+    }
+}
+//
+//  AddViewController.swift
+//  Table
+//
+//  Created by 203a17 on 2022/05/13.
+//
+
+import UIKit
+
+class AddViewController: UIViewController,UIPickerViewDelegate, UIPickerViewDataSource {
+    
+    let MAX_ARRAY_NUM = 9
+    let PICKER_VIEW_COMUMN = 1
+    let PICKER_VIEW_HEIGHT:CGFloat = 40
+    var imageArray = [UIImage?]()
+    var imageFileName = [ "1.png", "2.png", "3.png", "4.png", "5.png", "6.png", "7.png",
+    "8.png", "9.png"]
+    var fileName = ""
+ 
+
+    @IBOutlet var tfAddItem: UITextField!
+    @IBOutlet var imageView: UIImageView!
+    @IBOutlet var pickerView: UIPickerView!
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // Do any additional setup after loading the view.
+        for i in 0 ..< MAX_ARRAY_NUM {
+            let image = UIImage(named: imageFileName[i])
+            imageArray.append(image)
+        }
+        imageView.image = imageArray[0]
+        fileName = imageFileName[0]
+    }
+    
+    @IBAction func btnAddItem(_ sender: UIButton) {
+        items.append(tfAddItem.text!)
+        itemsImageFile.append("imageFileName")
+        tfAddItem.text=""
+        _ = navigationController?.popViewController(animated: true)
+        
+    }
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return PICKER_VIEW_COMUMN
+    }
+
+
+    // returns height of row for each component.
+    func pickerView(_ pickerView: UIPickerView, rowHeightForComponent component: Int) -> CGFloat {
+        return PICKER_VIEW_HEIGHT
+    }
+
+    // returns the # of rows in each component..
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return imageFileName.count
+    }
+
+
+    func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
+        let imageView = UIImageView(image:imageArray[row])
+        imageView.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+        
+        return imageView
+    }
+
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        imageView.image = imageArray[row]
+        fileName = imageFileName[row]
+    }
+
+    
+    /*
+    // MARK: - Navigation
+
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // Get the new view controller using segue.destination.
+        // Pass the selected object to the new view controller.
+    }
+    */
+
+}
+//
+//  DetailViewController.swift
+//  Table
+//
+//  Created by 203a17 on 2022/05/13.
+//
+
+import UIKit
+
+class DetailViewController: UIViewController {
+
+   
+    @IBOutlet var imgView: UIImageView!
+    
+    var lastPoint: CGPoint!
+    var lineSize:CGFloat = 2.0
+    var lineColor = UIColor.red.cgColor
+    var receiveItem = ""
+    
+    @IBOutlet var lblItem: UILabel!
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // Do any additional setup after loading the view.
+        lblItem.text = receiveItem
+    }
+    @IBAction func save(_ sender: UIBarButtonItem) {
+        let saveAlert = UIAlertController(title: "경고", message: "저장하시겠습니까?", preferredStyle: UIAlertController.Style.alert)
+        let onAction = UIAlertAction(title: "네", style: UIAlertAction.Style.default, handler: nil)
+        saveAlert.addAction(onAction)
+        present(saveAlert, animated: true, completion: nil)
+    }
+    
+    @IBAction func btnClearImageVIew(_ sender: UIButton) {
+        imgView.image = nil
+    }
+    
+    func receiveItem(_ item: String)
+    {
+        receiveItem = item
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        let touch = touches.first! as UITouch
+        
+        lastPoint = touch.location(in: imgView)
+    }
+    
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        UIGraphicsBeginImageContext(imgView.frame.size)
+        UIGraphicsGetCurrentContext()?.setStrokeColor(lineColor)
+        UIGraphicsGetCurrentContext()?.setLineCap(CGLineCap.round)
+        UIGraphicsGetCurrentContext()?.setLineWidth(lineSize)
+        
+        let touch = touches.first! as UITouch
+        let currPoint = touch.location(in: imgView)
+        
+        imgView.image?.draw(in: CGRect(x: 0, y: 0, width: imgView.frame.size.width, height: imgView.frame.size.height))
+        
+        UIGraphicsGetCurrentContext()?.move(to: CGPoint(x: lastPoint.x, y: lastPoint.y))
+        UIGraphicsGetCurrentContext()?.addLine(to: CGPoint(x: currPoint.x, y: currPoint.y))
+        UIGraphicsGetCurrentContext()?.strokePath()
+        
+        imgView.image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        lastPoint = currPoint
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        UIGraphicsBeginImageContext(imgView.frame.size)
+        UIGraphicsGetCurrentContext()?.setStrokeColor(lineColor)
+        UIGraphicsGetCurrentContext()?.setLineCap(CGLineCap.round)
+        UIGraphicsGetCurrentContext()?.setLineWidth(lineSize)
+        
+        imgView.image?.draw(in: CGRect(x: 0, y: 0, width: imgView.frame.size.width, height: imgView.frame.size.height))
+        
+        UIGraphicsGetCurrentContext()?.move(to: CGPoint(x: lastPoint.x, y: lastPoint.y))
+        UIGraphicsGetCurrentContext()?.addLine(to: CGPoint(x: lastPoint.x, y: lastPoint.y))
+        UIGraphicsGetCurrentContext()?.strokePath()
+        
+        imgView.image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+    }
+    
+    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        if motion == .motionShake {
+            imgView.image = nil
+        }
+    }
+}
+    /*
+    // MARK: - Navigation
+
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // Get the new view controller using segue.destination.
+        // Pass the selected object to the new view controller.
+    }
+    */
+
+
+//
+//  RecordViewController.swift
+//  Table
+//
+//  Created by Mina Choi on 2022/06/11.
+//
+
+import UIKit
+import AVFoundation
+
+class RecordViewController: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDelegate {
+    
+    var audioPlayer: AVAudioPlayer?
+    var audioRecorder: AVAudioRecorder?
+    
+    @IBOutlet var playButton: UIButton!
+    @IBOutlet var stopButton: UIButton!
+    
+    @IBOutlet var recordButton: UIButton!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        playButton.isEnabled = false
+                stopButton.isEnabled = false
+                // 도큐먼트 디렉터리 확인
+                let dirPaths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+                let docsDir = dirPaths[0] as String
+                // sound.caf 이름의 파일을 위한 URL 구성
+                let soundFilePath = docsDir.appending("/sound.caf")
+                let soundFileURL = URL(fileURLWithPath: soundFilePath)
+                // 녹음 품질 설정
+                let recordSettings = [AVEncoderAudioQualityKey: AVAudioQuality.min.rawValue,
+                                      AVEncoderBitRateKey: 16,
+                                      AVNumberOfChannelsKey: 2,
+                                      AVSampleRateKey: 44100.0] as [String : Any]
+                
+                // 공유 오디오 세션 인스턴스를 반환 받는다.
+                let audioSession = AVAudioSession.sharedInstance()
+                do {
+                    // 현재 오디오 세션의 카테고리를 정한다. (재생, 녹음)
+                    try audioSession.setCategory(AVAudioSession.Category.playAndRecord)
+                } catch {
+                    print("audioSession error: \(error.localizedDescription)")
+        // Do any additional setup after loading the view.
+                }
+    
+            
+            // audioRecorder 인스턴스 생성
+            do {
+                try audioRecorder = AVAudioRecorder(url: soundFileURL, settings: recordSettings)
+                audioRecorder?.prepareToRecord()
+            } catch {
+                print("audioSession Error: \(error.localizedDescription)")
+            }
+        }
+    @IBAction func recordAudio(_ sender: UIButton) {
+   
+            if audioRecorder?.isRecording == false {
+                playButton.isEnabled = false
+                stopButton.isEnabled = true
+                audioRecorder?.record()
+            }
+        }
+        
+    @IBAction func playAudio(_ sender: UIButton) {
+    
+            if audioRecorder?.isRecording == false {
+                stopButton.isEnabled = true
+                recordButton.isEnabled = false
+                
+                do {
+                    try audioPlayer = AVAudioPlayer(contentsOf: audioRecorder!.url)
+                    audioPlayer?.delegate = self
+                    audioPlayer?.play()
+                } catch {
+                                print("audioPlayer error: \(error.localizedDescription)")
+                            }
+                        }
+                    }
+                    
+    @IBAction func stopAudio(_ sender: UIButton) {
+
+    
+                        stopButton.isEnabled = false
+                        playButton.isEnabled = true
+                        recordButton.isEnabled = true
+                        
+                        if audioRecorder?.isRecording == true {
+                            audioRecorder?.stop()
+                        } else {
+                            audioPlayer?.stop()
+                        }
+                    }
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+            recordButton.isEnabled = true
+            stopButton.isEnabled = false
+        }
+        
+        // 디코더 에러 발생하면 호출
+        func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
+            print("Audio Player Decode Error")
+        }
+        
+        // MARK: - AVAudioRecorderDelegate
+        
+        // 시간 제한으로 녹음 종료하면 호출
+        func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
+            print("Record Success")
+        }
+    // 녹음중 에러 발생하면 호출
+        func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder, error: Error?) {
+            print("Audio Record Encode Error")
+        }
+    @IBAction func save(_ sender: UIBarButtonItem) {
+      
+            let saveAlert = UIAlertController(title: "경고", message: "저장하시겠습니까?", preferredStyle: UIAlertController.Style.alert)
+            let onAction = UIAlertAction(title: "네", style: UIAlertAction.Style.default, handler: nil)
+            saveAlert.addAction(onAction)
+            present(saveAlert, animated: true, completion: nil)
+        }
+    }
+    /*
+    // MARK: - Navigation
+
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // Get the new view controller using segue.destination.
+        // Pass the selected object to the new view controller.
+    }
+    */
+
+
+//
+//  cameraViewController.swift
+//  Table
+//
+//  Created by Mina Choi on 2022/06/11.
+//
+
+import UIKit
+import MobileCoreServices
+
+class cameraViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    
+    @IBOutlet weak var imageView: UIImageView!
+    
+    let imagePicker: UIImagePickerController! = UIImagePickerController()
+    var captureImage: UIImage!
+    var flagImageSave = false
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view, typically from a nib.
+    }
+
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+
+   
+    @IBAction func cameraClicked(_ sender: UIButton) {
+        if(UIImagePickerController.isSourceTypeAvailable(.camera)){
+            flagImageSave = true
+            imagePicker.delegate = self
+            imagePicker.sourceType = .camera
+            imagePicker.mediaTypes = [kUTTypeImage as String]
+            imagePicker.allowsEditing = false
+            
+            present(imagePicker, animated: true, completion: nil)
+        }
+    }
+    
+    @IBAction func albumClicked(_ sender: UIButton) {
+        if (UIImagePickerController.isSourceTypeAvailable(.photoLibrary)) {
+            flagImageSave = false
+            
+            imagePicker.delegate = self
+            imagePicker.sourceType = .photoLibrary
+            imagePicker.mediaTypes = [kUTTypeImage as String]
+            imagePicker.allowsEditing = true
+            
+            present(imagePicker, animated: true, completion: nil)
+        }
+    }
+    
+    
+    // 사진 찍은 후, 앨범에서 사진을 가져온 후 실행되는 함수
+    @available(iOS 2.0, *)
+    public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]){
+        let mediaType = info[UIImagePickerController.InfoKey.mediaType.rawValue] as! NSString
+        print(mediaType)
+        
+        if mediaType.isEqual(to: kUTTypeImage as NSString as String) {
+            captureImage = info[UIImagePickerController.InfoKey.originalImage.rawValue] as? UIImage
+            
+            if flagImageSave {
+                UIImageWriteToSavedPhotosAlbum(captureImage, self, nil, nil)
+            }
+            
+            imageView.image = captureImage
+        }
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    @available(iOS 2.0, *)
+    public func imagePickerControllerDidCancel(_ picker: UIImagePickerController){
+        self.dismiss(animated: true, completion: nil)
+    }
+}
+    
+
+    /*
+    // MARK: - Navigation
+
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // Get the new view controller using segue.destination.
+        // Pass the selected object to the new view controller.
+    }
+    */
+
+
